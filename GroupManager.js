@@ -7,7 +7,7 @@ class GroupManager {
 	}
 
 //Create
-	new(id, users=[], model=this._model) {
+	new(id, model=this._model, ...users) {
 		if(id in this._groups)
 			return false;
 
