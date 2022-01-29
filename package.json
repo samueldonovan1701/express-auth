@@ -1,0 +1,27 @@
+{
+  "name": "express-auth",
+  "version": "1.0.0",
+  "description": "NodeJS module for handling authentication and authorization on an express web server",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/samueldonovan1701/express-auth.git"
+  },
+  "keywords": [
+    "express",
+    "auth",
+    "login",
+    "groups",
+    "token",
+    "session"
+  ],
+  "author": "Samuel Donovan",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/samueldonovan1701/express-auth/issues"
+  },
+  "homepage": "https://github.com/samueldonovan1701/express-auth#readme"
+}
