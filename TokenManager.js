@@ -3,7 +3,7 @@
 var crypto = require('crypto');
 
 class TokenManager {
-	constructor(model = {}, maxAge=3600000, purgeInterval=3600000) {
+	constructor(model = {}, maxAge=3600, purgeInterval=3600) {
 		this._tokens = {};
 		this._model = model;
 
@@ -25,8 +25,8 @@ class TokenManager {
 
 		this._tokens[tokenId] = { 
 			user: userId,
-			expires: Date.now() + maxAge,
 			model: model
+			expires: Math.floor(Date.now()/1000 + maxAge),
 		};
 		return tokenId;
 	}
@@ -107,7 +107,7 @@ class TokenManager {
 	}
 	_periodicPurge() {
 		this.purge();
-		setTimeout(this._periodicPurge.bind(this), this.purgeInterval);
+		setTimeout(this._periodicPurge.bind(this), this.purgeInterval*1000);
 	}
 };
 
