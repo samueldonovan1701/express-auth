@@ -1,30 +1,47 @@
 'use strict';
 
 class UserManager {
-	constructor() {
+	constructor(model = {}) {
 		this._users = {};
+		this._model = model;
 	}
 
-//Methods
+//Create
 	new(id, pw) {
 		if(id in this._users)
 			return false;
 
-		this._users[id] = pw;
+		this._users[id] = {
+			"pw": pw,
+			"model": this._model
+		};
 		return true;
 	}
-	del(id) {
+
+//Read
+	get(id) {
 		if(!(id in this._users))
 			return false;
 
-		delete this._users[id];
-		return true;
+		return this._users[id].model;
+	}
+	verifyPW(id, pw) {
+		if(!(id in this._users))
+			return false;
+		
+		return pw == this._users[id];
 	}
 	all() {
-		return this._users.keys();
+		return Object.keys(this._users);
 	}
 
+//Update
+	set(id, model) {
+		if(!(id in this._users))
+			return false;
 
+		this._users[id].model = model;
+	}
 	setID(old, updated) {
 		if(updated in this._users || !(old in this._users))
 			return false;
@@ -40,11 +57,14 @@ class UserManager {
 		this._users[id] = newPW;
 		return true;
 	}
-	verifyPW(id, pw) {
+
+//Delete
+	del(id) {
 		if(!(id in this._users))
 			return false;
-		
-		return pw == this._users[id];
+
+		delete this._users[id];
+		return true;
 	}
 };
 
