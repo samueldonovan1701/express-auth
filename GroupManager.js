@@ -25,15 +25,7 @@ class GroupManager {
 		if(group == undefined)
 			return undefined;
 		else
-			return group.model;
-	}
-	getUsers(id) {
-		let group = this._groups[id];
-
-		if(group == undefined)
-			return undefined;
-		else
-			return group.users;
+			return group;
 	}
 	all() {
 		return Object.keys(this._groups);
