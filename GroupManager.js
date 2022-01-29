@@ -70,7 +70,7 @@ class GroupManager {
 			return true;
 		}
 	}
-	addUsers(id, users) {
+	addUsers(id, ...users) {
 		let group = this._groups[id];
 
 		if(group == undefined)
@@ -80,7 +80,7 @@ class GroupManager {
 			return true;
 		}
 	}
-	remUsers(id, users) {
+	remUsers(id, ...users) {
 		let group = this._groups[id];
 
 		if(group == undefined)
