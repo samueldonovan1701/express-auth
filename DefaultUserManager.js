@@ -40,4 +40,4 @@ class DefaultUserManager {
 	}
 };
 
-module.exports = AuthManager;
+module.exports = DefaultUserManager;
