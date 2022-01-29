@@ -1,6 +1,6 @@
 'use strict';
 
-class DefaultUserManager {
+class UserManager {
 	constructor() {
 		this._users = {};
 	}
@@ -40,4 +40,4 @@ class DefaultUserManager {
 	}
 };
 
-module.exports = DefaultUserManager;
+module.exports = UserManager;
