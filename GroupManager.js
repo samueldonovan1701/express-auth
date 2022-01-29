@@ -7,7 +7,7 @@ class GroupManager {
 	}
 
 //Create
-	new(id, model=this._model, ...users) {
+	new(id, model=this._model, users) {
 		if(id in this._groups)
 			return false;
 
@@ -43,7 +43,7 @@ class GroupManager {
 	set(id, model) {
 		let group = this._groups[id];
 
-		if(_groups == undefined)
+		if(group == undefined)
 			return undefined;
 		else {
 			group.model = model;
@@ -70,7 +70,7 @@ class GroupManager {
 			return true;
 		}
 	}
-	addUsers(id, ...users) {
+	addUsers(id, users) {
 		let group = this._groups[id];
 
 		if(group == undefined)
@@ -80,7 +80,7 @@ class GroupManager {
 			return true;
 		}
 	}
-	remUsers(id, ...users) {
+	remUsers(id, users) {
 		let group = this._groups[id];
 
 		if(group == undefined)
