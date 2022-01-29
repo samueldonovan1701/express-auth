@@ -25,6 +25,14 @@ class UserManager {
 	}
 
 
+	setID(old, updated) {
+		if(updated in this._users || !(old in this._users))
+			return false;
+
+		this._users[updated] = this._users[old];
+		delete this._users[old];
+		return true;
+	}
 	setPW(id, newPW) {
 		if(!(id in this._users))
 			return false;
