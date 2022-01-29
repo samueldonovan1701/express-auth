@@ -13,7 +13,7 @@ class UserManager {
 
 		this._users[id] = {
 			"pw": pw,
-			"model": this._model
+			"model": model
 		};
 		return true;
 	}
