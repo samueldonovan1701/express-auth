@@ -17,7 +17,7 @@ class TokenManager {
 	}
 
 //Create
-	new(userId, model=this._model, maxAge=this.maxAge) {
+	new(userId, maxAge=this.maxAge) {
 		let tokenId = crypto.createHash('md5')
 			.update(userId)
 			.update(Date.now().toString())
@@ -25,8 +25,8 @@ class TokenManager {
 
 		this._tokens[tokenId] = { 
 			user: userId,
-			model: model
 			expires: Math.floor(Date.now()/1000 + maxAge),
+			model: this._model
 		};
 		return tokenId;
 	}

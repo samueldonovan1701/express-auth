@@ -7,13 +7,13 @@ class GroupManager {
 	}
 
 //Create
-	new(id, model=this._model, users) {
+	new(id, users) {
 		if(id in this._groups)
 			return false;
 
 		this._groups[id] = {
 			"users": users,
-			"model": model
+			"model": this._model
 		};
 		return true;
 	}
