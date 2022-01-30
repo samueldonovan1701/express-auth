@@ -2,7 +2,7 @@
   "name": "express-auth",
   "version": "1.0.0",
   "description": "NodeJS module for handling authentication and authorization on an express web server",
-  "main": "index.js",
+  "main": "express-auth.js",
   "scripts": {
     "test": "node test.js"
   },
@@ -23,5 +23,8 @@
   "bugs": {
     "url": "https://github.com/samueldonovan1701/express-auth/issues"
   },
-  "homepage": "https://github.com/samueldonovan1701/express-auth#readme"
+  "homepage": "https://github.com/samueldonovan1701/express-auth#readme",
+  "dependencies": {
+    "cookie-parser": "^1.4.6"
+  }
 }

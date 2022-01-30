@@ -20,12 +20,27 @@ tokenManager:
 
 
 class AuthManager {
-	 constructor(userManager, groupManager, tokenManager) {
+	constructor(userManager, groupManager, tokenManager) {
 	 	//Managers
 	 		this.users = userManager;
 	 		this.groups = groupManager;
 	 		this.tokens = tokenManager;
-	 }
+	}
+
+	use(userManager=undefined, groupManager=undefined, tokenManager=undefined) {
+		if(userManager != undefined) {
+			delete this.users;
+			this.users = userManager;
+		}
+		if(groupManager != undefined) {
+			delete this.groups;
+			this.groups = groupManager;
+		}
+		if(tokenManager != undefined) {
+			delete this.tokens;
+			this.tokens = tokenManager;
+		}
+	}
 
 //Methods
 	login(req, res, userID, pw) {
