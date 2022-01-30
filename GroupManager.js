@@ -27,6 +27,16 @@ class GroupManager {
 		else
 			return group;
 	}
+	getUserGroups(userID) {
+		let groups = [];
+
+		for (const [groupID, group] of Object.entries(this._groups)) {
+  			if(userID in group.users)
+  				groups.append(groupID);
+		}
+
+		return groups;
+	}
 	all() {
 		return Object.keys(this._groups);
 	}
