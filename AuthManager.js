@@ -69,6 +69,10 @@ class AuthManager {
 	getCurrentUser(req, res) {
 		return this.tokens.getUser(req.signedCookies['session']);
 	}
+	getCurrentUserGroups(req, res) {
+		let userID = this.getCurrentUser(req, res);
+		return this.groups.getUserGroups(userID);
+	}
 };
 
 module.exports = AuthManager;
