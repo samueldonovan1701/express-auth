@@ -3,12 +3,14 @@
 var crypto = require('crypto');
 
 class TokenManager {
+	#tokens;
+	#model;
 	constructor(model = {}, maxAge=3600, purgeInterval=3600) {
-		this._tokens = {};
-		this._model = model;
+		this.#tokens = {};
+		this.#model = model;
 
 		this.purgeInterval = purgeInterval;
-		this._periodicPurge();	
+		this.startPeriodicPurging();
 
 		this.maxAge = maxAge;
 		this.httpOnly = true;
@@ -23,17 +25,17 @@ class TokenManager {
 			.update(Date.now().toString())
 			.digest('hex');
 
-		this._tokens[tokenId] = { 
+		this.#tokens[tokenId] = { 
 			user: userId,
 			expires: Math.floor(Date.now()/1000 + maxAge),
-			model: this._model
+			model: this.#model
 		};
 		return tokenId;
 	}
 
 //Read
 	get(id) {
-		let token = this._tokens[id];
+		let token = this.#tokens[id];
 
 		if(token == undefined)
 			return undefined;
@@ -41,7 +43,7 @@ class TokenManager {
 			return token;
 	}
 	getExpires(id) {
-		let token = this._tokens[id];
+		let token = this.#tokens[id];
 
 		if(token == undefined)
 			return undefined;
@@ -49,7 +51,7 @@ class TokenManager {
 			return token.expires;
 	}
 	getUser(id) {
-		let token = this._tokens[id];
+		let token = this.#tokens[id];
 
 		if(token == undefined)
 			return undefined;
@@ -57,7 +59,7 @@ class TokenManager {
 			return token.user;
 	}
 	getModel(id) {
-		let token = this._tokens[id];
+		let token = this.#tokens[id];
 
 		if(token == undefined)
 			return undefined;
@@ -65,12 +67,12 @@ class TokenManager {
 			return token.model;
 	}
 	all() {
-		return Object.keys(this._tokens);
+		return Object.keys(this.#tokens);
 	}
 
 //Update
 	setExpires(id, expires) {
-		let token = this._tokens[id];
+		let token = this.#tokens[id];
 
 		if(token == undefined)
 			return undefined;
@@ -80,7 +82,7 @@ class TokenManager {
 		}
 	}
 	setModel(id, model) {
-		let token = this._tokens[id];
+		let token = this.#tokens[id];
 
 		if(token == undefined)
 			return undefined;
@@ -92,22 +94,31 @@ class TokenManager {
 
 //Delete
 	del(id) {
-		if(!(id in this._tokens))
+		if(!(id in this.#tokens))
 			return false;
 
-		delete this._tokens[id];
+		delete this.#tokens[id];
 		return true;
 	}
+	
+	#purging;
 	purge() {
 		const now = Date.now();
-		for (const [id, token] of Object.entries(this._tokens)) {
+		for (const [id, token] of Object.entries(this.#tokens)) {
 			if(token.expires < now)
-				delete this._tokens[id];
+				delete this.#tokens[id];
 		}
 	}
-	_periodicPurge() {
+	startPeriodicPurging() {
+		this.#purging = true;
+	}
+	stopPeriodicPurging() {
+		this.#purging = false;
+	}
+	#periodicPurge() {
 		this.purge();
-		setTimeout(this._periodicPurge.bind(this), this.purgeInterval*1000);
+		if(this.#purging)
+			setTimeout(this.#periodicPurge.bind(this), this.purgeInterval*1000);
 	}
 };
 
