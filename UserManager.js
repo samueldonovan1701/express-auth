@@ -1,17 +1,19 @@
 'use strict';
 
 class UserManager {
+	#users;
+	#model;
 	constructor(model = {}) {
-		this._users = {};
-		this._model = model;
+		this.#users = {};
+		this.#model = model;
 	}
 
 //Create
-	new(id, pw="", model=this._model) {
-		if(id in this._users)
+	new(id, pw="", model=this.#model) {
+		if(id in this.#users)
 			return false;
 
-		this._users[id] = {
+		this.#users[id] = {
 			"pw": pw,
 			"model": model
 		};
@@ -20,7 +22,7 @@ class UserManager {
 
 //Read
 	get(id) {
-		let user = this._users[id];
+		let user = this.#users[id];
 
 		if(user == undefined)
 			return undefined;
@@ -28,7 +30,7 @@ class UserManager {
 			return user.model;
 	}
 	verifyPW(id, pw) {
-		let user = this._users[id];
+		let user = this.#users[id];
 
 		if(user == undefined)
 			return undefined;
@@ -36,12 +38,12 @@ class UserManager {
 			return user.pw == pw;
 	}
 	all() {
-		return Object.keys(this._users);
+		return Object.keys(this.#users);
 	}
 
 //Update
 	set(id, model) {
-		let user = this._users[id];
+		let user = this.#users[id];
 
 		if(user == undefined)
 			return undefined;
@@ -51,17 +53,17 @@ class UserManager {
 		}
 	}
 	setID(old, updated) {
-		if(!(old in this._users))
+		if(!(old in this.#users))
 			return undefined;
-		if(updated in this._users)
+		if(updated in this.#users)
 			return false;
 
-		this._users[updated] = this._users[old];
-		delete this._users[old];
+		this.#users[updated] = this.#users[old];
+		delete this.#users[old];
 		return true;
 	}
 	setPW(id, newPW) {
-		let user = this._users[id];
+		let user = this.#users[id];
 
 		if(user == undefined)
 			return undefined;
@@ -73,10 +75,10 @@ class UserManager {
 
 //Delete
 	del(id) {
-		if(!(id in this._users))
+		if(!(id in this.#users))
 			return undefined;
 
-		delete this._users[id];
+		delete this.#users[id];
 		return true;
 	}
 };

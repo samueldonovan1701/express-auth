@@ -1,26 +1,28 @@
 'use strict';
 
 class GroupManager {
+	#groups;
+	#model;
 	constructor(model = {}) {
-		this._groups = {};
-		this._model = model;
+		this.#groups = {};
+		this.#model = model;
 	}
 
 //Create
 	new(id, users) {
-		if(id in this._groups)
+		if(id in this.#groups)
 			return false;
 
-		this._groups[id] = {
+		this.#groups[id] = {
 			"users": users,
-			"model": this._model
+			"model": this.#model
 		};
 		return true;
 	}
 
 //Read
 	get(id) {
-		let group = this._groups[id];
+		let group = this.#groups[id];
 
 		if(group == undefined)
 			return undefined;
@@ -28,12 +30,12 @@ class GroupManager {
 			return group;
 	}
 	all() {
-		return Object.keys(this._groups);
+		return Object.keys(this.#groups);
 	}
 
 //Update
 	set(id, model) {
-		let group = this._groups[id];
+		let group = this.#groups[id];
 
 		if(group == undefined)
 			return undefined;
@@ -43,17 +45,17 @@ class GroupManager {
 		}
 	}
 	setID(old, updated) {
-		if(!(old in this._groups))
+		if(!(old in this.#groups))
 			return undefined;
-		if(updated in this._groups)
+		if(updated in this.#groups)
 			return false;
 
-		this._groups[updated] = this._groups[old];
-		delete this._groups[old];
+		this.#groups[updated] = this.#groups[old];
+		delete this.#groups[old];
 		return true;
 	}
 	setUsers(id, users) {
-		let group = this._groups[id];
+		let group = this.#groups[id];
 
 		if(group == undefined)
 			return undefined;
@@ -63,7 +65,7 @@ class GroupManager {
 		}
 	}
 	addUsers(id, users) {
-		let group = this._groups[id];
+		let group = this.#groups[id];
 
 		if(group == undefined)
 			return undefined;
@@ -73,7 +75,7 @@ class GroupManager {
 		}
 	}
 	remUsers(id, users) {
-		let group = this._groups[id];
+		let group = this.#groups[id];
 
 		if(group == undefined)
 			return undefined;
@@ -87,10 +89,10 @@ class GroupManager {
 
 //Delete
 	del(id) {
-		if(!(id in this._groups))
+		if(!(id in this.#groups))
 			return undefined;
 
-		delete this._groups[id];
+		delete this.#groups[id];
 		return true;
 	}
 };
