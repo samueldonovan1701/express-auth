@@ -26,9 +26,9 @@ class SessionManager {
 
 		//Check model.expires exists and is a number/date. If not, generate
 		if(!model.hasOwnProperty("expires"))
-			model.expires = Math.floor(Date.now()/1000 + maxAge);
+			model.expires = Math.floor(Date.now() + maxAge);
 		if(!(model.expires instanceof Date) && typeof model.expires != "number") 
-			model.expires = Math.floor(Date.now()/1000 + maxAge);
+			model.expires = Math.floor(Date.now() + maxAge);
 
 		//Set model.userID
 		model.userID = userID;
