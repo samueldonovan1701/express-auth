@@ -17,14 +17,11 @@ class GroupManager {
 		if(typeof model != "object" && typeof model != "function")
 			model = {"value": model};
 
-		//Check model.users exists and is an array. If not, set
-		if(!model.hasOwnProperty("users"))
-			model.users = [];
-		if(!Array.isArray(model.users)) 
-			model.users = [];
-		
 		//Set id
 		model.id = id;
+
+		//Set users
+		model.users = users;
 
 		//Set
 		this.#groups[id] = model;
@@ -43,8 +40,8 @@ class GroupManager {
 			return undefined;
 
 		for (const [groupID, group] of Object.entries(this.#groups)) {
-  			if(userID in group.users)
-  				groups.append(groupID);
+  			if(group.users.includes(userID))
+  				groups.push(groupID);
 		}
 
 		return groups;
