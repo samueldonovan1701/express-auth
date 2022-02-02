@@ -3,36 +3,46 @@
 class GroupManager {
 	#groups;
 	#model;
-	constructor(model = {}) {
+	constructor(model = {"id": "", "users":[]}) {
 		this.#groups = {};
-		this.#model = model;
+		this.model = model;
 	}
 
 //Create
-	new(id, users) {
+	new(id, users=[], model=this.model) {
 		if(id in this.#groups)
 			return false;
 
-		this.#groups[id] = {
-			"users": users,
-			"model": this.#model
-		};
+		//Check that model is an object
+		if(typeof model != "object" && typeof model != "function")
+			model = {"value": model};
+
+		//Check model.users exists and is an array. If not, set
+		if(!model.hasOwnProperty("users"))
+			model.users = [];
+		if(!Array.isArray(model.users)) 
+			model.users = [];
+		
+		//Set id
+		model.id = id;
+
+		//Set
+		this.#groups[id] = model;
+
 		return true;
 	}
 
 //Read
 	get(id) {
-		let group = this.#groups[id];
-
-		if(group == undefined)
-			return undefined;
-		else
-			return group;
+		return this.#groups[id];
 	}
-	getUserGroups(userID) {
+	with(userID) {
 		let groups = [];
 
-		for (const [groupID, group] of Object.entries(this._groups)) {
+		if(userID === undefined)
+			return undefined;
+
+		for (const [groupID, group] of Object.entries(this.#groups)) {
   			if(userID in group.users)
   				groups.append(groupID);
 		}
@@ -45,54 +55,27 @@ class GroupManager {
 
 //Update
 	set(id, model) {
-		let group = this.#groups[id];
+		let old = this.#groups[id];
 
-		if(group == undefined)
+		if(old == undefined)
 			return undefined;
 		else {
-			group.model = model;
-			return true;
-		}
-	}
-	setID(old, updated) {
-		if(!(old in this.#groups))
-			return undefined;
-		if(updated in this.#groups)
-			return false;
+			//Check that model is an object			
+			if(typeof model != "object" && typeof model != "function")
+				model = {"value": model};
 
-		this.#groups[updated] = this.#groups[old];
-		delete this.#groups[old];
-		return true;
-	}
-	setUsers(id, users) {
-		let group = this.#groups[id];
+			//Check model.users exists and is an array. If not, keep old
+			if(!model.hasOwnProperty("users"))
+				model.users = old.users
+			if(!Array.isArray(model.users)) 
+				model.users = old.users;
+			
+			//Set id
+			model.id = id;
 
-		if(group == undefined)
-			return undefined;
-		else {
-			group.users = users;
-			return true;
-		}
-	}
-	addUsers(id, users) {
-		let group = this.#groups[id];
+			//Set model
+			this.#groups[id] = model;
 
-		if(group == undefined)
-			return undefined;
-		else {
-			group.users.concat(users);
-			return true;
-		}
-	}
-	remUsers(id, users) {
-		let group = this.#groups[id];
-
-		if(group == undefined)
-			return undefined;
-		else {
-			group.users.filter((groupmemeber) => { 
-				return users.indexOf(groupmemeber) == -1; 
-			});
 			return true;
 		}
 	}
