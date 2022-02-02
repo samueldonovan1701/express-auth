@@ -51,7 +51,7 @@ class UserManager {
 			//Check model.password exists and is a string. If not, keep old
 			if(!model.hasOwnProperty("password"))
 				model.password = old.password
-			if(typeof model.password != "password") 
+			if(typeof model.password != "string") 
 				model.password = old.password;
 
 			//Set id
