@@ -156,7 +156,7 @@ module.exports.logout.endpoint = function(req, res) {
 	if(logout === true)
 		res.sendStatus(200); //OK
 	else if(logout === undefined)
-		res.snedStatus(406); //Not logged in
+		res.sendStatus(406); //Not logged in
 	else if(logout === null)
 		res.sendStatus(409); //Conflict with server state
 
