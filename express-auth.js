@@ -1,19 +1,4 @@
 //Middleware req builder
-/***
- 	req.session = {
-		id: "string",
-		userID: "string",
-		...model
- 	} / undefined / null
-
-	req.user = {
-		id: "string",
-		password: "string",
-		...model
-	} / null
-
-	req.groups = [string]
-***/
 module.exports = function(req, res, next) {
 	sessionID = req.signedCookies['session'];
 
@@ -63,9 +48,6 @@ module.exports.sessions = new SessionManager();
 //login
 module.exports.login = function(req, res, username,	password)		
 {
-	if(req === "endpoint")
-		return module.exports.login.endpoint;
-
 	//Input validation
 	if(typeof username !== "string")
 		throw new Error("express-auth.login(req, res, username, password): username is not a string");
@@ -104,6 +86,17 @@ module.exports.login = function(req, res, username,	password)
 	}
 
 	//Login successful & cookie set
+
+	//Set req
+	req.session = module.exports.sessions.get(sessionID);
+
+	Object.defineProperty(req, "user", { get: function() {
+		return module.exports.users.get(username);
+	}});
+	Object.defineProperty(req, "groups", { get: function() {
+		return module.exports.groups.with(username);
+	}});
+
 	return true;
 }
 module.exports.login.endpoint = function(req, res) {
@@ -134,9 +127,6 @@ module.exports.login.endpoint = function(req, res) {
 }
 //logout
 module.exports.logout = function(req, res) {
-	if(req === "endpoint")
-		return module.exports.logout.endpoint;	
-
 	//Input validation
 	if(req.session === undefined) //No cookie
 		return undefined;
@@ -149,6 +139,11 @@ module.exports.logout = function(req, res) {
 	//Clear server-side session
 	module.exports.sessions.del(req.session.id);
 
+	//Clear req
+	req.user = null;
+	req.groups = null;
+	req.session = undefined;
+	
 	return true;
 }
 module.exports.logout.endpoint = function(req, res) {
