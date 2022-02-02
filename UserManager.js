@@ -3,39 +3,38 @@
 class UserManager {
 	#users;
 	#model;
-	constructor(model = {}) {
+	constructor(model = {"id":"", "password":""}) {
 		this.#users = {};
-		this.#model = model;
+		this.model = model;
 	}
 
 //Create
-	new(id, pw="", model=this.#model) {
+	add(id, password="", model=this.model) {
 		if(id in this.#users)
 			return false;
 
-		this.#users[id] = {
-			"pw": pw,
-			"model": model
-		};
+		//Check that model is an object
+		if(typeof model != "object" && typeof model != "function")
+			model = {"value": model};
+
+		//Check model.pw exists and is a string. If not, set
+		if(!model.hasOwnProperty("password"))
+			model.password = password;
+		if(typeof model.password != "string") 
+			model.password = password;
+
+		//Set id
+		model.id = id;
+
+		//Set
+		this.#users[id] = model;
+
 		return true;
 	}
 
 //Read
 	get(id) {
-		let user = this.#users[id];
-
-		if(user == undefined)
-			return undefined;
-		else
-			return user.model;
-	}
-	verifyPW(id, pw) {
-		let user = this.#users[id];
-
-		if(user == undefined)
-			return undefined;
-		else
-			return user.pw == pw;
+		return this.#users[id];
 	}
 	all() {
 		return Object.keys(this.#users);
@@ -43,32 +42,27 @@ class UserManager {
 
 //Update
 	set(id, model) {
-		let user = this.#users[id];
+		let old = this.#users[id];
 
-		if(user == undefined)
+		if(old === undefined)
 			return undefined;
 		else {
-			user.model = model;
-			return true;
-		}
-	}
-	setID(old, updated) {
-		if(!(old in this.#users))
-			return undefined;
-		if(updated in this.#users)
-			return false;
+			//Check that model is an object			
+			if(typeof model != "object" && typeof model != "function")
+				model = {"value": model};
 
-		this.#users[updated] = this.#users[old];
-		delete this.#users[old];
-		return true;
-	}
-	setPW(id, newPW) {
-		let user = this.#users[id];
+			//Check model.password exists and is a string. If not, keep old
+			if(!model.hasOwnProperty("password"))
+				model.password = old.password
+			if(typeof model.password != "password") 
+				model.password = old.password;
 
-		if(user == undefined)
-			return undefined;
-		else {
-			user.pw = newPW;
+			//Set id
+			model.id = id;
+
+			//Set model
+			this.#users[id] = model;
+
 			return true;
 		}
 	}
