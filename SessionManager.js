@@ -5,7 +5,7 @@ var crypto = require('crypto');
 class SessionManager {
 	#sessions;
 	#model;
-	constructor(model = {"id":"", "userID": "", "expires": NaN}, maxAge=3600000, purgeInterval=900000) {
+	constructor(model = {"userID": "", "expires": NaN}, maxAge=3600000, purgeInterval=900000) {
 		this.#sessions = {};
 		this.#model = model;
 
@@ -76,9 +76,6 @@ class SessionManager {
 				model.userID = old.userID
 			if(typeof model.userID != "string") 
 				model.userID = old.userID;
-
-			//Set id
-			model.id = id;
 
 			//Set model
 			this.#sessions[id] = model;
