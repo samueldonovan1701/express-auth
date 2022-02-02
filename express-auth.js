@@ -15,8 +15,6 @@
 	req.user.groups = [string]
 ***/
 module.exports = function(req, res, next) {
-	req.body.username = "sam";
-	req.body.password = "xyz";
 	sessionID = req.signedCookies['session'];
 
 	if(sessionID === undefined) {
