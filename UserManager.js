@@ -9,7 +9,7 @@ class UserManager {
 	}
 
 //Create
-	add(id, password="", model=this.model) {
+	add(id, password, model=this.model) {
 		if(id in this.#users)
 			return false;
 
@@ -17,14 +17,11 @@ class UserManager {
 		if(typeof model != "object" && typeof model != "function")
 			model = {"value": model};
 
-		//Check model.pw exists and is a string. If not, set
-		if(!model.hasOwnProperty("password"))
-			model.password = password;
-		if(typeof model.password != "string") 
-			model.password = password;
-
 		//Set id
 		model.id = id;
+
+		//Set password
+		model.password = password;
 
 		//Set
 		this.#users[id] = model;

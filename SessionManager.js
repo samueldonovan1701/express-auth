@@ -33,12 +33,9 @@ class SessionManager {
 		//Set model.userID
 		model.userID = userID;
 
-		//Set id
-		model.id = id;
-
 		//Generate sessionID
 		let sessionID = crypto.createHash('md5')
-			.update(Math.random())
+			.update(Math.random().toString())
 			.update(Date.now().toString())
 			.digest('base64');
 

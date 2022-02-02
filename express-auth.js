@@ -86,7 +86,7 @@ module.exports.login = function(req, res, username,	password)
 
 	//Try to set a secure cookie
 	try {
-		res.cookie("session", tokenID, {
+		res.cookie("session", sessionID, {
 			signed: true,
 			expires: new Date(Date.now() + module.exports.sessions.maxAge),
 			maxAge: module.exports.sessions.maxAge, //In ms
