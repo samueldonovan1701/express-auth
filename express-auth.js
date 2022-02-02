@@ -1,24 +1,10 @@
 //Middleware req builder
-/***
- 	req.session = {
-		id: "string",
-		userID: "string",
-		...model
- 	} / undefined / null
-
-	req.user = {
-		id: "string",
-		password: "string",
-		...model
-	} / null
-
-	req.user.groups = [string]
-***/
 module.exports = function(req, res, next) {
 	sessionID = req.signedCookies['session'];
 
 	if(sessionID === undefined) {
 		req.user = null;
+		req.groups = null;
 		req.session = undefined;
 
 		next();
@@ -29,6 +15,7 @@ module.exports = function(req, res, next) {
 
 	if(req.session === undefined) {
 		req.user = null;
+		req.groups = null;
 		req.session = null;
 
 		next();
@@ -36,10 +23,10 @@ module.exports = function(req, res, next) {
 	}
 
 	Object.defineProperty(req, "user", { get: function() {
-		module.exports.users.get(session.userID);
+		return module.exports.users.get(req.session.userID);
 	}});
-	Object.defineProperty(req.user, "groups", { get: function() {
-		module.exports.groups.with(session.userID);
+	Object.defineProperty(req, "groups", { get: function() {
+		return module.exports.groups.with(req.session.userID);
 	}});
 
 	next();
@@ -61,9 +48,6 @@ module.exports.sessions = new SessionManager();
 //login
 module.exports.login = function(req, res, username,	password)		
 {
-	if(req === "endpoint")
-		return module.exports.login.endpoint;
-
 	//Input validation
 	if(typeof username !== "string")
 		throw new Error("express-auth.login(req, res, username, password): username is not a string");
@@ -102,6 +86,17 @@ module.exports.login = function(req, res, username,	password)
 	}
 
 	//Login successful & cookie set
+
+	//Set req
+	req.session = module.exports.sessions.get(sessionID);
+
+	Object.defineProperty(req, "user", { get: function() {
+		return module.exports.users.get(username);
+	}});
+	Object.defineProperty(req, "groups", { get: function() {
+		return module.exports.groups.with(username);
+	}});
+
 	return true;
 }
 module.exports.login.endpoint = function(req, res) {
@@ -132,9 +127,6 @@ module.exports.login.endpoint = function(req, res) {
 }
 //logout
 module.exports.logout = function(req, res) {
-	if(req === "endpoint")
-		return module.exports.logout.endpoint;	
-
 	//Input validation
 	if(req.session === undefined) //No cookie
 		return undefined;
@@ -147,6 +139,11 @@ module.exports.logout = function(req, res) {
 	//Clear server-side session
 	module.exports.sessions.del(req.session.id);
 
+	//Clear req
+	req.user = null;
+	req.groups = null;
+	req.session = undefined;
+	
 	return true;
 }
 module.exports.logout.endpoint = function(req, res) {
@@ -166,7 +163,7 @@ module.exports.logout.endpoint = function(req, res) {
 
 //Authorization
 module.exports.onlyUsers = function(...users) {
-	if(users === []) { //onlyUsers()
+	if(users.length === 0) { //onlyUsers()
 		return function(req, res, next) {
 			if(!req.session) { //Not logged in
 				res.sendStatus(401); //Unauthorized
@@ -183,7 +180,7 @@ module.exports.onlyUsers = function(...users) {
 				res.sendStatus(401); //Unauthorized
 				res.end();
 			}
-			else if(!(req.session.userID in users)) {
+			else if(!users.includes(req.session.userID)) {
 				res.sendStatus(403); //Forbidden
 				res.end();
 			}
@@ -197,7 +194,7 @@ module.exports.onlyUsers = function(...users) {
 				res.sendStatus(401); //Unauthorized
 				res.end();
 			}
-			else if(!(req.session.userID in users)) {
+			else if(!users.includes(req.session.userID)) {
 				res.sendStatus(403); //Forbidden
 				res.end();
 			}
@@ -207,13 +204,13 @@ module.exports.onlyUsers = function(...users) {
 	}
 }
 module.exports.onlyGroups = function(...groups) {
-	if(users === []) { //onlyGroups()
+	if(groups.length === 0) { //onlyGroups()
 		return function(req, res, next) {
 			if(!req.session) { //Not logged in
 				res.sendStatus(401); //Unauthorized
 				res.end();
 			}
-			else if(req.user.groups == []) {
+			else if(req.groups.length === 0) {
 				res.sendStatus(403); //Forbidden
 				res.end();
 			}
@@ -228,7 +225,7 @@ module.exports.onlyGroups = function(...groups) {
 				res.sendStatus(401); //Unauthorized
 				res.end();
 			}
-			else if(!req.user.groups.some(group => groups.includes(group))) {
+			else if(!req.groups.some(group => groups.includes(group))) {
 				res.sendStatus(403); //Forbidden
 				res.end();
 			}
@@ -242,7 +239,7 @@ module.exports.onlyGroups = function(...groups) {
 				res.sendStatus(401); //Unauthorized
 				res.end();
 			}
-			else if(!req.user.groups.some(group => groups.includes(group))) {
+			else if(!req.groups.some(group => groups.includes(group))) {
 				res.sendStatus(403); //Forbidden
 				res.end();
 			}

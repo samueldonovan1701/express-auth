@@ -5,7 +5,7 @@ var crypto = require('crypto');
 class SessionManager {
 	#sessions;
 	#model;
-	constructor(model = {"id":"", "userID": "", "expires": NaN}, maxAge=3600000, purgeInterval=900000) {
+	constructor(model = {"userID": "", "expires": NaN}, maxAge=3600000, purgeInterval=900000) {
 		this.#sessions = {};
 		this.#model = model;
 
@@ -26,9 +26,9 @@ class SessionManager {
 
 		//Check model.expires exists and is a number/date. If not, generate
 		if(!model.hasOwnProperty("expires"))
-			model.expires = Math.floor(Date.now()/1000 + maxAge);
+			model.expires = Math.floor(Date.now() + maxAge);
 		if(!(model.expires instanceof Date) && typeof model.expires != "number") 
-			model.expires = Math.floor(Date.now()/1000 + maxAge);
+			model.expires = Math.floor(Date.now() + maxAge);
 
 		//Set model.userID
 		model.userID = userID;
@@ -76,9 +76,6 @@ class SessionManager {
 				model.userID = old.userID
 			if(typeof model.userID != "string") 
 				model.userID = old.userID;
-
-			//Set id
-			model.id = id;
 
 			//Set model
 			this.#sessions[id] = model;
