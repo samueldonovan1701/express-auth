@@ -1,23 +1,23 @@
-# express-auth
+# express-cookie-session-auth
 
-`express-auth` is a simple, customizable authentication and authorization manager for express-based applications.
+`express-cookie-session-auth` is a simple, customizable authentication and authorization manager for express-based applications.
 
-While `express-auth` provides default in-memory user, group, and session managers, these can easily be overridden with developer-provided interfaces.
+While `express-cookie-session-auth` provides default in-memory user, group, and session managers, these can easily be overridden with developer-provided interfaces.
 
 <hr/>
 
 <table>
 <tr>
-    <td><A href="https://github.com/samueldonovan1701/express-auth">GitHub</a></td>
+    <td><A href="https://github.com/samueldonovan1701/express-cookie-session-auth">GitHub</a></td>
 </tr>
 <tr>
-    <td><A href="https://github.com/samueldonovan1701/express-auth/wiki">Wiki</a></td>
+    <td><A href="https://github.com/samueldonovan1701/express-cookie-session-auth/wiki">Wiki</a></td>
 </tr>
 <tr>
     <td><A href="">npm</a></td>
 </tr>
 <tr>
-    <td><A href="https://github.com/samueldonovan1701/express-auth/issues">Report an Issue</a></td>
+    <td><A href="https://github.com/samueldonovan1701/express-cookie-session-auth/issues">Report an Issue</a></td>
 </tr>
 <tr>
     <td>Author: <a href="https://github.com/samueldonovan1701">Samuel Donovan</a></td>
@@ -30,7 +30,7 @@ While `express-auth` provides default in-memory user, group, and session manager
 # Install
 TODO: put on npm
 <pre><code>
-npm install express-auth
+npm install express-cookie-session-auth
 </code></pre>
 
 # Setup
@@ -43,7 +43,7 @@ app.use(express.json()); //Not always needed
 const cookieParser = require('cookie-parser');
 app.use(cookieParser("secret"));
 
-const auth = require('express-auth');
+const auth = require('express-cookie-session-auth');
 app.use(auth);
 </code></pre>
 
@@ -95,12 +95,12 @@ app.use("/manage-users", auth.onlyGroups("managers"));
 # Dependencies
 
 ### <a href="https://expressjs.com/">Express</a>
-`express-auth` is built specifically to be used with Express web framework for Node.js
+`express-cookie-session-auth` is built specifically to be used with Express web framework for Node.js
 
 Express is distributed under the <a href="https://creativecommons.org/licenses/by-sa/3.0/us/">Creative commons license</a>.
 
 ### <a href="https://www.npmjs.com/package/cookie-parser">cookie-parser</a>
-`express-auth` uses cookies to track sessions, and `cookie-parser` makes this easier, as well as allow for the use of signed cookies.
+`express-cookie-session-auth` uses cookies to track sessions, and `cookie-parser` makes this easier, as well as allow for the use of signed cookies.
 
 `cookie-parser` is distributed under the <a href="https://github.com/expressjs/cookie-parser/blob/HEAD/LICENSE">MIT license</a>.
 
