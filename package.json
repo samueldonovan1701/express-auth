@@ -1,7 +1,7 @@
 {
-  "name": "express-auth",
+  "name": "express-cookie-session-auth",
   "version": "1.0.0",
-  "description": "NodeJS module for handling authentication and authorization on an express web server",
+  "description": "NodeJS module for handling authentication and authorization using session tokens and cookies on an express web server",
   "main": "express-auth.js",
   "scripts": {
     "test": "node test.js"
