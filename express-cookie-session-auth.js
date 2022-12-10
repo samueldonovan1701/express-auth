@@ -33,7 +33,7 @@ module.exports = function(req, res, next) {
 	//Get session
 	req.session = module.exports.sessions.get(sessionID);
 	Object.defineProperty(req, "loggedIn", { get: function() {
-		return self.session !== undefined;
+		return self.session;
 	}});
 
 	if(req.session === undefined) {
