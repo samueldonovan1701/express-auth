@@ -33,6 +33,13 @@ class UserManager {
 	get(id) {
 		return this.#users[id];
 	}
+	verify(id, password) {
+		let user = module.exports.users.get(id);
+		if(user === undefined) //Username not found
+			return undefined;
+	
+		return (user.password === password);
+	}
 	all() {
 		return Object.keys(this.#users);
 	}

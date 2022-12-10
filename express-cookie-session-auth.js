@@ -74,13 +74,9 @@ module.exports.login = function(req, res, username,	password)
 		throw new Error("express-auth.login(req, res, username, password): password is not a string");
 
 	//Attempt login
-	let user = module.exports.users.get(username);
-	if(user === undefined) //Username not found
-		return undefined;
-
-	let login = (user.password === password);
+	let login = module.exports.users.verify(username, password);
 	if(!login) //Bad password
-		return false;
+		return login;
 
 	//Login success
 
