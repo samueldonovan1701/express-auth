@@ -32,7 +32,8 @@ module.exports = function(req, res, next) {
 
 	//Get session
 	req.session = module.exports.sessions.get(sessionID);
-
+	req.loggedIn = (req.session !== undefined);
+	
 	if(req.session === undefined) {
 		req.user = null;
 		req.groups = null;
