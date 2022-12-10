@@ -32,8 +32,10 @@ module.exports = function(req, res, next) {
 
 	//Get session
 	req.session = module.exports.sessions.get(sessionID);
-	req.loggedIn = (req.session !== undefined);
-	
+	Object.defineProperty(req, "loggedIn", { get: function() {
+		return self.session !== undefined;
+	}});
+
 	if(req.session === undefined) {
 		req.user = null;
 		req.groups = null;
