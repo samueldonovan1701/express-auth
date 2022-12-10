@@ -28,7 +28,6 @@ While `express-cookie-session-auth` provides default in-memory user, group, and 
 </table>
 
 # Install
-TODO: put on npm
 <pre><code>
 npm install express-cookie-session-auth
 </code></pre>
@@ -104,7 +103,7 @@ Express is distributed under the <a href="https://creativecommons.org/licenses/b
 
 `cookie-parser` is distributed under the <a href="https://github.com/expressjs/cookie-parser/blob/HEAD/LICENSE">MIT license</a>.
 
-### <a href="https://expressjs.com/en/api.html#express.json">express.json()</a> (optional)
+### <a href="https://expressjs.com/en/api.html#express.json">express.json()</a>
 Used by the `auth.login.endpoint` for the username and password. Does not need to be used if `auth.login.endpoint` is never used.
 
 This module is included with Express.
@@ -112,4 +111,8 @@ This module is included with Express.
 # License
 This work is licensed under a <a href="http://creativecommons.org/licenses/by-sa/3.0/us/">Creative Commons Attribution-ShareAlike 3.0 United States License</a>.
 
-
+# TODO
+- Add `inEveryGroup` middleware and rename `onlyGroups` to `inOneGroup`
+- Document built-in endpoints better
+- Add req.isLoggedIn
+- Document that req.user and req.groups are getters

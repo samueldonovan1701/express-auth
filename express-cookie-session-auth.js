@@ -1,7 +1,26 @@
-//Middleware req builder
-module.exports = function(req, res, next) {
-	sessionID = req.signedCookies['session'];
+/*******************************************************************************
+********************************************************************************
+* Resource Managers
+********************************************************************************
+*******************************************************************************/
+UserManager = require("./UserManager.js");
+GroupManager = require("./GroupManager.js");
+SessionManager = require("./SessionManager.js");
 
+module.exports.users = new UserManager();
+module.exports.groups = new GroupManager();
+module.exports.sessions = new SessionManager();
+
+
+/*******************************************************************************
+********************************************************************************
+* Middleware `req` builder
+********************************************************************************
+*******************************************************************************/
+module.exports = function(req, res, next) {
+	//Get session cookie
+	sessionID = req.signedCookies['session'];
+	
 	if(sessionID === undefined) {
 		req.user = null;
 		req.groups = null;
@@ -11,6 +30,7 @@ module.exports = function(req, res, next) {
 		return;
 	}
 
+	//Get session
 	req.session = module.exports.sessions.get(sessionID);
 
 	if(req.session === undefined) {
@@ -22,9 +42,12 @@ module.exports = function(req, res, next) {
 		return;
 	}
 
+	// Set req.user to a getter
 	Object.defineProperty(req, "user", { get: function() {
 		return module.exports.users.get(req.session.userID);
 	}});
+
+	// Set req.groups to a getter
 	Object.defineProperty(req, "groups", { get: function() {
 		return module.exports.groups.with(req.session.userID);
 	}});
@@ -34,18 +57,11 @@ module.exports = function(req, res, next) {
 }
 
 
-//Resource Managers
-UserManager = require("./UserManager.js");
-GroupManager = require("./GroupManager.js");
-SessionManager = require("./SessionManager.js");
-
-module.exports.users = new UserManager();
-module.exports.groups = new GroupManager();
-module.exports.sessions = new SessionManager();
-
-
-//Authentication
-//login
+/*******************************************************************************
+********************************************************************************
+* Authentication Functions
+********************************************************************************
+*******************************************************************************/
 module.exports.login = function(req, res, username,	password)		
 {
 	//Input validation
@@ -56,7 +72,7 @@ module.exports.login = function(req, res, username,	password)
 
 	//Attempt login
 	let user = module.exports.users.get(username);
-	if(user === undefined)//Username not found
+	if(user === undefined) //Username not found
 		return undefined;
 
 	let login = (user.password === password);
@@ -99,6 +115,104 @@ module.exports.login = function(req, res, username,	password)
 
 	return true;
 }
+module.exports.logout = function(req, res) {
+	//Input validation
+	if(req.session === undefined) //No cookie
+		return undefined;
+	if(req.session === null) //No server-side session
+		return null;
+
+	//Clear user-side session
+	res.clearCookie('session');
+
+	//Clear server-side session
+	module.exports.sessions.del(req.session.id);
+
+	//Clear req
+	req.user = null;
+	req.groups = null;
+	req.session = undefined;
+	
+	return true;
+}
+
+
+/*******************************************************************************
+********************************************************************************
+* Authorization Functions
+********************************************************************************
+*******************************************************************************/
+module.exports.onlyUsers = function(...users) {
+	// Any logged in user
+	if(users.length === 0) { //onlyUsers()
+		return function(req, res, next) {
+			if(!req.session) { //Not logged in
+				res.sendStatus(401); //Unauthorized
+				res.end();
+			}
+			else
+				next();
+		};
+	}
+	
+	// List of specific users
+	if(Array.isArray(users[0])) { 
+		//onlyUsers(["a","b","c"])
+		users = users[0];
+	}
+	return function(req, res, next) {
+		if(!req.session) { //Not logged in
+			res.sendStatus(401); //Unauthorized
+			res.end();
+		}
+		else if(!users.includes(req.session.userID)) {
+			res.sendStatus(403); //Forbidden
+			res.end();
+		}
+		else
+			next();
+	};
+}
+module.exports.onlyGroups = function(...groups) {
+	// Any user in at least one group
+	if(groups.length === 0) { //onlyGroups()
+		return function(req, res, next) {
+			if(!req.session) { //Not logged in
+				res.sendStatus(401); //Unauthorized
+				res.end();
+			}
+			else if(req.groups.length === 0) {
+				res.sendStatus(403); //Forbidden
+				res.end();
+			}
+			else
+				next();
+		};
+	}
+
+	// Any user in at least one in a list of gorups 
+	if(Array.isArray(groups[0])) { //onlyGroups(["a","b","c"])
+		groups = groups[0];
+	}
+	return function(req, res, next) {
+		if(!req.session) { //Not logged in
+			res.sendStatus(401); //Unauthorized
+			res.end();
+		}
+		else if(!req.groups.some(group => groups.includes(group))) {
+			res.sendStatus(403); //Forbidden
+			res.end();
+		}
+		else
+			next();
+	};
+}
+
+/*******************************************************************************
+********************************************************************************
+* Built-in Endpoints
+********************************************************************************
+*******************************************************************************/
 module.exports.login.endpoint = function(req, res) {
 	//Input validation
 	if(req.body === undefined)
@@ -125,27 +239,6 @@ module.exports.login.endpoint = function(req, res) {
 
 	res.end();
 }
-//logout
-module.exports.logout = function(req, res) {
-	//Input validation
-	if(req.session === undefined) //No cookie
-		return undefined;
-	if(req.session === null) //No server-side session
-		return null;
-
-	//Clear user-side session
-	res.clearCookie('session');
-
-	//Clear server-side session
-	module.exports.sessions.del(req.session.id);
-
-	//Clear req
-	req.user = null;
-	req.groups = null;
-	req.session = undefined;
-	
-	return true;
-}
 module.exports.logout.endpoint = function(req, res) {
 	let logout = module.exports.logout(req, res);
 
@@ -158,93 +251,4 @@ module.exports.logout.endpoint = function(req, res) {
 		res.sendStatus(409); //Conflict with server state
 
 	res.end();
-}
-
-
-//Authorization
-module.exports.onlyUsers = function(...users) {
-	if(users.length === 0) { //onlyUsers()
-		return function(req, res, next) {
-			if(!req.session) { //Not logged in
-				res.sendStatus(401); //Unauthorized
-				res.end();
-			}
-			else
-				next();
-		};
-	}
-	else if(Array.isArray(users[0])) { //onlyUsers(["a","b","c"])
-		users = users[0];
-		return function(req, res, next) {
-			if(!req.session) { //Not logged in
-				res.sendStatus(401); //Unauthorized
-				res.end();
-			}
-			else if(!users.includes(req.session.userID)) {
-				res.sendStatus(403); //Forbidden
-				res.end();
-			}
-			else
-				next();
-		};
-	}
-	else { //onlyUsers("a","b","c")
-		return function(req, res, next) {
-			if(!req.session) { //Not logged in
-				res.sendStatus(401); //Unauthorized
-				res.end();
-			}
-			else if(!users.includes(req.session.userID)) {
-				res.sendStatus(403); //Forbidden
-				res.end();
-			}
-			else
-				next();
-		};
-	}
-}
-module.exports.onlyGroups = function(...groups) {
-	if(groups.length === 0) { //onlyGroups()
-		return function(req, res, next) {
-			if(!req.session) { //Not logged in
-				res.sendStatus(401); //Unauthorized
-				res.end();
-			}
-			else if(req.groups.length === 0) {
-				res.sendStatus(403); //Forbidden
-				res.end();
-			}
-			else
-				next();
-		};
-	}
-	else if(Array.isArray(groups[0])) { //onlyGroups(["a","b","c"])
-		groups = groups[0];
-		return function(req, res, next) {
-			if(!req.session) { //Not logged in
-				res.sendStatus(401); //Unauthorized
-				res.end();
-			}
-			else if(!req.groups.some(group => groups.includes(group))) {
-				res.sendStatus(403); //Forbidden
-				res.end();
-			}
-			else
-				next();
-		};
-	}
-	else { //onlyUsers("a","b","c")
-		return function(req, res, next) {
-			if(!req.session) { //Not logged in
-				res.sendStatus(401); //Unauthorized
-				res.end();
-			}
-			else if(!req.groups.some(group => groups.includes(group))) {
-				res.sendStatus(403); //Forbidden
-				res.end();
-			}
-			else
-				next();
-		};
-	}
 }
