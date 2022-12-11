@@ -65,23 +65,23 @@ module.exports = function(req, res, next) {
 * Authentication Functions
 ********************************************************************************
 *******************************************************************************/
-module.exports.login = function(req, res, username,	password)		
+module.exports.login = function(req, res, userid,password)		
 {
 	//Input validation
-	if(typeof username !== "string")
+	if(typeof userid !== "string")
 		throw new Error("express-auth.login(req, res, username, password): username is not a string");
 	if(typeof password !== "string")
 		throw new Error("express-auth.login(req, res, username, password): password is not a string");
 
 	//Attempt login
-	let login = module.exports.users.verify(username, password);
+	let login = module.exports.users.verify(userid, password);
 	if(!login) //Bad password
 		return login;
 
 	//Login success
 
 	//Create new session
-	let sessionID = module.exports.sessions.new(username);
+	let sessionID = module.exports.sessions.new(userid);
 
 	//Try to set a secure cookie
 	try {
