@@ -6,7 +6,7 @@ class UserManager {
 	constructor(defaultModel = {"id":"", "password":""}) {
 		// Input Validation
 		if(typeof defaultModel != "object")
-			throw TypeError("express-cookie-session-auth.UserManager(defaultModel): typeof `defaultModel` is not 'object'")
+			throw TypeError("express-cookie-session-auth.UserManager(defaultModel): `typeof defaultModel` is not 'object'")
 
 		this.#users = {};
 		this.defaultModel = defaultModel;
@@ -20,13 +20,13 @@ class UserManager {
 	add(id, password, model=this.defaultModel) {
 		// Input Validation
 		if(typeof id != "string")
-			throw TypeError("express-cookie-session-auth.UserManager.add(id, password, model): typeof `id` is not 'string'")
+			throw TypeError("express-cookie-session-auth.UserManager.add(id, password, model): `typeof id` is not 'string'")
 		if(typeof password != "string")
-			throw TypeError("express-cookie-session-auth.UserManager.add(id, password, model): typeof `password` is not 'string'")
+			throw TypeError("express-cookie-session-auth.UserManager.add(id, password, model): `typeof password` is not 'string'")
 		if(typeof model != "object")
-			throw TypeError("express-cookie-session-auth.UserManager.add(id, password, model): typeof `model` is not 'object'")
+			throw TypeError("express-cookie-session-auth.UserManager.add(id, password, model): `typeof model` is not 'object'")
 	
-		// Check that user exists
+		// Check that user doesn't exist
 		if(id in this.#users)
 			return false;
 
@@ -50,7 +50,7 @@ class UserManager {
 	get(id) {
 		// Input Validation
 		if(typeof id != "string")
-			throw TypeError("express-cookie-session-auth.UserManager.get(id): typeof `id` is not 'string'")
+			throw TypeError("express-cookie-session-auth.UserManager.get(id): `typeof id` is not 'string'")
 	
 		// Get User
 		return this.#users[id];
@@ -58,9 +58,9 @@ class UserManager {
 	verify(id, password) {
 		// Input Validation
 		if(typeof id != "string")
-			throw TypeError("express-cookie-session-auth.UserManager.verify(id, password): typeof `id` is not 'string'")
+			throw TypeError("express-cookie-session-auth.UserManager.verify(id, password): `typeof id` is not 'string'")
 		if(typeof password != "string")
-			throw TypeError("express-cookie-session-auth.UserManager.verify(id, password): typeof `password` is not 'string'")
+			throw TypeError("express-cookie-session-auth.UserManager.verify(id, password): `typeof password` is not 'string'")
 
 		// Get User
 		let user = this.#users[id];
@@ -82,11 +82,11 @@ class UserManager {
 	set(id, model=this.defaultModel) {
 		// Input Validation
 		if(typeof id != "string")
-			throw TypeError("express-cookie-session-auth.UserManager.set(id, model): typeof `id` is not 'string'")
+			throw TypeError("express-cookie-session-auth.UserManager.set(id, model): `typeof id` is not 'string'")
 		if(model.hasOwnProperty("password") && typeof model.password != "string")
-			throw TypeError("express-cookie-session-auth.UserManager.set(id, model): typeof `model.password` is not 'string'")
+			throw TypeError("express-cookie-session-auth.UserManager.set(id, model): `typeof model.password` is not 'string'")
 		if(typeof model != "object")
-			throw TypeError("express-cookie-session-auth.UserManager.set(id, model): typeof `model` is not 'object'")
+			throw TypeError("express-cookie-session-auth.UserManager.set(id, model): `typeof model` is not 'object'")
 		
 		// Check if user exists
 		let current = this.#users[id];
@@ -106,11 +106,15 @@ class UserManager {
 		return true;
 	}
 
-//Delete
+/*******************************************************************************
+********************************************************************************
+* Delete Functions
+********************************************************************************
+*******************************************************************************/
 	del(id) {
 		// Input Validation
 		if(typeof id != "string")
-			throw TypeError("express-cookie-session-auth.UserManager.del(id): typeof `id` is not 'string'")
+			throw TypeError("express-cookie-session-auth.UserManager.del(id): `typeof id` is not 'string'")
 		
 		if(this.#users[id] == undefined)
 			return undefined;
